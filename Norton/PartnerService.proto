@@ -1,0 +1,361 @@
+package partnerservice;
+
+option java_package = "com.symantec.mobileinsight.generated";
+  
+// ResultCode is used in CatResponse and Response below to indicate success/
+// failure of the respective Query. Note that 'UNKNOWN' is a failure case and
+// is placed first, and Messages which use the type mark it as optional. The 
+// reason for this is ensure compatibility when new codes are added. When this
+// happens, code which was compiled before a code was added will mark it as an
+// unknown field, and when retrieved give it the default value, which is UNKNOWN
+// See http://www.mail-archive.com/protobuf@googlegroups.com/msg04331.html
+enum ResultCode
+{
+    UNKNOWN = 0;    // this is still a failure code, see above
+    SUCCESS = 1;
+    INVALID_KEY = 2;   // the partner_key is invalid
+    EXPIRED_KEY = 3;   // the partner_key is expired
+    INVALID_REQUEST = 4;   // the request from user is invalid
+    SERVER_ERROR = 5;
+}
+  
+message Query
+{
+    //It's assigned to each partner. Every query should contain this key.
+    required string partner_key = 1;
+    optional bytes client_guid = 2;
+  
+    message PackageInfo
+    { 
+        optional bytes file_sha2 = 1;
+  
+        // Other fields that we can use to get reputation if the server
+        // doesn't know  the binary.  May be more than just these.
+        optional string package_name = 2;
+  
+        // there may be more than one signer keys
+        repeated bytes signer_keys = 3;
+          
+        // the cookie for associating the query with its response.
+        required uint32 cookie = 4;
+  
+        // the market name, like Google Marketplace, wandoujia, samsungapps
+        optional string market_name = 5;
+  
+        // the market URL, like https://market.android.com/details?id=com.pwn1337.android
+        optional string market_url = 6;
+  
+        // the version name of application
+        optional string version_name = 7;
+
+        // Sha256s of signer keys, every signer key matches to one sha256. 
+        // This field is intend to replace the signer_keys field to reduce the size. 
+        // Future MRS server should first check this field and fail over to 
+        // signer_keys field in case this is empty.
+        repeated bytes signer_keys_sha2 = 8;
+    }
+  
+    // List of one or more packages to query for
+    repeated PackageInfo packages = 3;
+}
+  
+  
+//
+// Security
+//
+  
+// Security related attributes of an APK
+message ApkContext
+{
+    enum attributes_enum
+    {
+        none = 0;
+        exploit = 1;
+        premium_services = 2;
+        // subsequent flags should be numbered 4, 8, 16, 32, 64...
+    }
+  
+    // Bitwise combination of values from attributes_enum
+    required uint64 inference_attributes  = 1;
+}
+  
+// Security related attributes of a signer
+message SignerContext
+{
+    // Represented as the number of seconds since UTC (Jan 1, 1970). Note 
+    // that this is an UNSIGNED value and cannot represent dates PRIOR to 1970.
+    required fixed32 first_seen_date = 1;
+  
+    // ID having one of the values defined at http://socialtext.ges.symantec.com/star-mobile/mobile_security_application_mobsec
+    // (Prevalence Bands section).  Also see that page for notes on what to do if the value you get for this field does
+    // not match one of the values you expected (IE, the server added a new value after your client was deployed)
+    required uint32 prevalence_band = 2;
+}
+  
+// Security related attributes of an app
+message AppContext
+{
+    // Same meaning as SignerContext.first_seen_date
+    required fixed32 first_seen_date = 1;
+  
+    // Same meaning as SignerContext.prevalence_band
+    required uint32 prevalence_band = 2;
+}
+  
+// Top level security rating for a file
+message SecurityRating
+{
+    // Security score of this file.  Negative values indicate bad disposition, positive values indicate good.
+    // The magnitude of the score indicates the confidence in the disposition.  This will have one of the values
+    // defined at http://socialtext.ges.symantec.com/star-mobile/mobile_security_application_mobsec
+    // (Security Scores section).
+    enum ScoreRating
+    {
+        HIGH_BAD = 0;      // -110 >= score
+        MEDIUM_BAD = 1;    // -30 > score > -110
+        LOW_BAD = 2;       // 0 > score >= -30
+        NEUTRAL = 3;       // 10 > score >= 0
+        LOW_GOOD = 4;      // 30 > score >= 10
+        MEDIUM_GOOD = 5;   // 110 > score >= 30
+        HIGH_GOOD = 6;     // >= 110
+    }
+    required ScoreRating score_rating = 1;
+  
+    optional SignerContext signer_context = 2;
+    optional AppContext app_context = 3;
+    optional ApkContext apk_context = 4;
+}
+
+// Details of a single type of private data being leaked from an APK
+message PrivacyDetails
+{
+    // Whois information
+    // Leak destination longitude information
+    optional float destination_longitude = 1;
+
+    // Leak destination latitude information
+    optional float destination_latitude = 2;
+
+    // leak destination company name. Query by whois API
+    optional string destination_org = 3;
+
+    // leak destination country. Query by whois API
+    optional string destination_country = 4;
+
+    // leak destination address. Query by whois API
+    optional string destination_address = 5;
+	
+	// leak destination city. Query by whois API
+    optional string destination_city = 6;
+}
+ 
+  
+// Details of a single potentially unwanted behavior of an APK.  This might
+// be a privacy leak or something else annoying
+message GreywareBehavior
+{
+    enum Behavior
+    {
+        // Ads are displayed in the context of the app (inside app's displayed screens)
+        IN_CONTEXT_ADS = 0;
+        // Phone number (aka line 1 number) is/can be exported
+        PHONE_NUMBER = 1;
+        // GPS or cell tower coordinates are/can be exported
+        LOCATION_INFO = 2;
+        // Information about the network operator(Operator name, country, MNC/MCC) is/can be exported
+        OPERATOR_INFO = 3;
+        // IMEI, OS/kernel version, phone producer, phone model are/can be exported
+        DEVICE_INFO = 4;
+        // SIM serial number, IMSI, voicemail number is/can be exported
+        SIM_CARD_INFO = 5;
+        // Details about the configured accounts(user names of entries under Settings/Accounts) are/can be exported
+        ACCOUNT_INFO = 6;
+        // Details about apps installed on the phone are/can be exported, 
+        // this info means full or partial list of installed package names, or app titles
+        INSTALLED_APP_INFO = 7;
+        // Details about apps running at a certain time are/can be exported
+        RUNNING_APP_INFO = 8;
+        // The component with this behaviour might attempt to download an APK and launch the package installer
+        INSTALL_APP = 9;
+        // The component with this behaviour is capable of downloading 
+        // and running a different APK/JAR which can yield different behaviours
+        SELF_UPDATE = 10;
+        // Ads are displayed as app notifications
+        NOTIFICATION_BAR_ADS = 11;
+        // Shortcuts are/can be placed on the home screen, or app list
+        SHORTCUT_ADS = 12;
+        // Ad component can create bookmarks in the browser
+        BOOKMARK_ADS = 13;
+        // After dialling, audio ads are played instead of the ringing 
+        // tone while waiting for the other party to answer the call
+        DIALTONE_ADS = 14;
+        // Ads are placed as saved SMS/MMS conversations
+        SMS_INBOX_ADS = 15;
+        // Browser homepage can be changed by the ad component
+        CHANGE_HOMEPAGE = 16;
+        // Clicking on some ads can result in sending SMS messages without launching the SMS compose screen 
+        // where the user has to click 'Send' before the text is sent
+        CLICK_SMS = 17;
+        // The component can export recorded audio clips, the audio clip can be recorded by the app, 
+        // or even picked from saved recorded audio clips
+        AUDIO_INFO = 18;
+        // Browser history privacy is/can be leaked
+        BROWSER_HISTORY = 19;
+        // Browser bookmarks privacy is/can be leaked
+        BROWSER_BOOKMARKS = 20;
+        // Calendar privacy is/can be leaked
+        CALENDAR_INFO = 21;
+        // Call log privacy is/can be leaked
+        CALL_LOG = 22;
+        // Component takes pictures or picks them from gallery and exports them
+        CAMERA_INFO = 23;
+        // Can send details from contact list
+        CONTACT_INFO = 24;
+        // Can send the content or sender/recipient details from SMS/MMS messages
+        SMS_INFO = 25;
+        // Settings info is/can be leaked
+        SETTINGS_INFO = 26;
+
+        // Media leaking
+        // Leak photo file with user interaction
+        PHOTO_INFO_WITH_USER_INTERACTION = 27;
+        // Leak photo file without user interaction
+        PHOTO_INFO_WITHOUT_USER_INTERACTION = 28;
+        // Leak video file with user interaction
+        VIDEO_INFO_WITH_USER_INTERACTION = 29;
+        // Leak video file without user interaction
+        VIDEO_INFO_WITHOUT_USER_INTERACTION = 30;
+
+        // Account leaking
+        // Google Account, Google Email address
+        EMAIL_ADDRESS = 31;
+        // Social network account, facebook account
+        SOCIAL_NETWORK_ACCOUNT = 32;
+        // Voice mail account
+        VOICE_MAIL_ACCOUNT = 33;
+
+        // Media file access behaviors
+        // Access photo file with user interaction
+        PHOTO_INFO_WITH_USER_INTERACTION_LOW_CONFIDENCE = 34;
+        // Access photo file without user interaction
+        PHOTO_INFO_WITHOUT_USER_INTERACTION_LOW_CONFIDENCE = 35;
+        // Access video file with user interaction
+        VIDEO_INFO_WITH_USER_INTERACTION_LOW_CONFIDENCE = 36;
+        // Access video file without user interaction
+        VIDEO_INFO_WITHOUT_USER_INTERACTION_LOW_CONFIDENCE = 37;
+    }
+    optional Behavior behavior_name = 1;
+      
+    // Method by which the data was leaked off of the device (IE HTTP, SMS, etc.).  If this field is not set,
+    // the leak method is not known.  This will have one of the values defined at
+    // http://socialtext.ges.symantec.com/star-mobile/appinsight_constant_fields_description#leak_type_id_description
+    enum Leak
+    {
+        INTERNET = 0;       // Leak by Internet
+        INTERNET_HTTP = 1;  // Leak by Internet (HTTP)
+        INTERNET_HTTPS = 2; // Leak by Internet - (HTTPS)
+        SMS = 3;            // Leak by SMS
+        PHONE_CALL= 4;      // Leak by Phone Call
+    }
+    optional Leak leak = 2;
+
+
+    // Present if this behavior is privacy related
+    optional PrivacyDetails privacy_details = 3;
+
+    // status for detection
+    // 1-100 confidence, 100 meaning perfect certainty, 0 meaning complete uncertainty.
+    // >100 expectation
+    //required uint32 confidence = 4;
+}
+  
+// Represents a "risk" associated with an APK, where a risk is either a 3rd party library
+// (like an ad library) that the APK uses, or the main app itself.  A risk contains a list
+// of behaviors performed by that library or app.
+message GreywareRisk
+{
+    // The name of the 3rd party library, or not present if these behaviors belong to the main application
+    optional string name = 1;
+ 
+    // The list of behaviors associated with this risk
+    repeated GreywareBehavior behavior_list = 2;
+}
+  
+// Represents all of the greyware related information of a file
+message GreywareRating
+{
+    // List of risks associated with this file
+    repeated GreywareRisk library_list = 1;
+}
+  
+  
+//
+// Performance
+//
+enum PerformanceAttr
+{
+    GPS = 0;                     // -10000
+    ACCELEROMETER = 1;           // 1 
+    MAGNETIC_FIELD = 2;          // 2 
+    ORIENTATION = 3;             // 3 
+    GYROSCOPE = 4;               // 4 
+    LIGHT = 5;                   // 5 
+    PRESSURE = 6;                // 6 
+    TEMPERATURE = 7;             // 7 
+    PROXIMITY = 8;               // 8 
+    GRAVITY = 9;                 // 9 
+    LINEAR_ACCELERATION = 10;    // 10
+    ROTATION_VECTOR = 11;        // 11
+    RELATIVE_HUMIDITY = 12;      // 12
+    AMBIENT_TEMPERATURE = 13;    // 13
+    WAKELOCK = 14;               // 501
+    PARTIAL_WAKELOCK = 15;       // 502
+    FULL_WAKELOCK = 16;          // 503
+    LONG_CONNECTION = 17;        // 511
+    LONG_ALARM = 18;             // 521
+}
+  
+// Represents android applications' battery usage, network usage, etc.
+  
+message PerformanceRating 
+{
+    enum ScoreRating 
+    {
+        UNKNOWN = 0;   // -1
+        NONE = 1;      // 0
+        VERYLOW = 2;   // 1
+        LOW = 3;       // 2
+        MEDIUM = 4;    // 3
+        HIGH = 5;      // 4
+        VERYHIGH = 6;  // 5
+    }
+    optional ScoreRating battery_background = 1;
+    optional ScoreRating battery_foreground = 2;
+    optional ScoreRating network_background = 3;
+    optional ScoreRating network_overall = 4;
+    repeated PerformanceAttr perf_list = 5;
+    optional ScoreRating network_background_mobile = 6;
+    optional ScoreRating network_overall_mobile = 7;
+}
+  
+message Response
+{
+    // Indicates the success/failure of the request
+    optional ResultCode result_code = 1;
+  
+    message PackageReputation
+    {
+        // the cookie for associating the response with its query.
+        required uint32 cookie = 1;
+          
+        optional SecurityRating security = 2;
+          
+        optional GreywareRating greyware = 3;
+          
+        optional PerformanceRating performance = 4;
+    }
+  
+    // One entry in this list for each PackageInfo in the query if result_code == SUCCESS.
+    // Otherwise this will be empty.
+    repeated PackageReputation reputations = 2;
+}

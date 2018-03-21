@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'loginwindow.ui'
+#
+# Created: Tue Dec 06 13:43:16 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
+#
+# WARNING! All changes made in this file will be lost!
+
+from PySide import QtCore, QtGui
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(353, 177)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
+        Dialog.setSizePolicy(sizePolicy)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("../icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        Dialog.setWindowIcon(icon)
+        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setGeometry(QtCore.QRect(10, 130, 331, 41))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.buttonBox.setFont(font)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.gridLayoutWidget = QtGui.QWidget(Dialog)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 40, 331, 101))
+        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        self.gridLayout = QtGui.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setObjectName("gridLayout")
+        self.labelPw = QtGui.QLabel(self.gridLayoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.labelPw.setFont(font)
+        self.labelPw.setObjectName("labelPw")
+        self.gridLayout.addWidget(self.labelPw, 1, 0, 1, 1)
+        self.lineEmail = QtGui.QLineEdit(self.gridLayoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.lineEmail.setFont(font)
+        self.lineEmail.setObjectName("lineEmail")
+        self.gridLayout.addWidget(self.lineEmail, 0, 1, 1, 1)
+        self.labelEmail = QtGui.QLabel(self.gridLayoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.labelEmail.setFont(font)
+        self.labelEmail.setObjectName("labelEmail")
+        self.gridLayout.addWidget(self.labelEmail, 0, 0, 1, 1)
+        self.linePw = QtGui.QLineEdit(self.gridLayoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.linePw.setFont(font)
+        self.linePw.setText("")
+        self.linePw.setEchoMode(QtGui.QLineEdit.Password)
+        self.linePw.setObjectName("linePw")
+        self.gridLayout.addWidget(self.linePw, 1, 1, 1, 1)
+        self.labelAotas = QtGui.QLabel(Dialog)
+        self.labelAotas.setGeometry(QtCore.QRect(10, 12, 71, 16))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setWeight(75)
+        font.setBold(True)
+        self.labelAotas.setFont(font)
+        self.labelAotas.setObjectName("labelAotas")
+        self.labelFullName = QtGui.QLabel(Dialog)
+        self.labelFullName.setGeometry(QtCore.QRect(90, 12, 191, 16))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.labelFullName.setFont(font)
+        self.labelFullName.setObjectName("labelFullName")
+
+        self.retranslateUi(Dialog)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), Dialog.reject)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "AOTAS", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWhatsThis(QtGui.QApplication.translate("Dialog", "Login your Google account. We\'ll scan your Android devices over the air.", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelPw.setText(QtGui.QApplication.translate("Dialog", "Password", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelEmail.setText(QtGui.QApplication.translate("Dialog", "Google Account", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelAotas.setText(QtGui.QApplication.translate("Dialog", "AOTAS", None, QtGui.QApplication.UnicodeUTF8))
+        self.labelFullName.setText(QtGui.QApplication.translate("Dialog", "Android Over The Air Scan", None, QtGui.QApplication.UnicodeUTF8))
+

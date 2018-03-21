@@ -1,0 +1,3 @@
+Python Lib Dependency:
+1. PySide (To run the aotas.py built on Qt)
+2. PyInstaller (To compile the aotos.py to a platform-specified binary. The build_binary.py will build the binary based on the OS you are running)

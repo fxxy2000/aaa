@@ -1,0 +1,22 @@
+{% extends 'aotas/base.html' %}
+{% block content %}
+<div class="login-container">
+    <h1 align="center">Welcome to the App Advisor Anywhere</h1>
+    <div class="login-div">
+        <form action="{% url 'verify_pin' %}" method='post'>{% csrf_token %}
+            <p style="margin:0px 10px 10px 10px;">Enter a verification code *</p>
+            <table style="border-spacing:10px; width: 100%">
+                <tr>
+                    <th align="center">G - <input type="text" name="pin" placeholder="Enter the 6-digit code"></th>
+                </tr>
+            </table>
+            <table style="border-spacing:10px; width: 100%">
+                <tr>
+                    <th align="center"><input class="button" type='submit' value='Verify Code' /></th>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <p class="login-note">* A text message with a verification code was just sent to your device </p>
+</div>
+{% endblock %}

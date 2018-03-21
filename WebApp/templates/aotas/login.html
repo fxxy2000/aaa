@@ -1,0 +1,29 @@
+{% extends 'aotas/base.html' %}
+{% block content %}
+	<div class="login-container">
+		<h1 align="center">Welcome to the App Advisor Anywhere</h1>
+		<div class="login-div">
+			<form action="{% url 'login_user' %}" method='post'>{% csrf_token %}
+				<p style="margin:0px 10px 10px 10px;">Enter your Google Credentials *</p>
+				<table style="border-spacing:10px; width: 100%">
+					{% for field in form %}
+						  <tr>
+							<th style="text-align:left;">{{ field.label }}</th>
+							<th style="text-align:left;">{{ field }}</th>
+						  </tr>
+					{% endfor %}
+				</table>
+				<table style=" width: 100%">
+					<tr>
+						<th align="center"><input class="button" type='submit' value='Login with Google' /></th>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<p class="login-note">* Android App Scanner scans apps in your devices attached to your Google Account. It requires your Google credentials for the sole purpose of feature functionality. <b>This information is never stored or shared with any third party.</b></p>
+	</div>
+	<p></p>
+	<div class="warning-container">
+		<h2 align="center">!!! CONFIDENTIAL !!!<br>FOR SYMANTEC INTERNAL USE ONLY</h2>
+	</div>
+{% endblock %}

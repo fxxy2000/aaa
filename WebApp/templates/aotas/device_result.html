@@ -1,0 +1,126 @@
+{% extends 'aotas/base.html' %}
+{% load static %}
+{% load aotas_extras %}
+{% block header %}
+<div class="clearfix">
+    <div class="logo-with-title">
+		<img src="{% static 'aotas/images/norton.png' %}" align="left" class="hf-mLogo"/>App Advisor Anywhere
+	</div>
+
+	<div style="width: 60%; float:right">
+	   <form action="{% url 'searchgp' %}" method='post'>{% csrf_token %}
+	   	<input class="search" type="text" name="keyword" placeholder="Search in Google Play...">
+	   </form>
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+	<div class="main-container">
+	    {% if devices == raw_results %}
+		    <h2 align="center"> Please <a href="{% url 'login_user' %}">login</a> first </h2>
+	    {% else %}
+			<h2 style="margin:18px;"> Apps on your {{ deviceName }}</h2>
+				{% for app_info in raw_results %}
+					<div class="card" id="{{ app_info.get_app.get_package_name }}">
+						<div class="popuptext" id="{{ app_info.get_app.get_package_name }}_pop">
+							{% if app_info.is_malicious != True %}
+							<p style="margin-left:16px">{{ app_info.get_privacy_label_html|safe }}</p>
+							<p style="margin-left:16px">{{ app_info.get_unusual_label_html|safe }}</p>
+							<p style="margin-left:16px">{{ app_info.get_ads_label_html|safe }}</p>
+								{% if app_info.get_battery_usage_label %}
+								<p style="margin-left:16px">{{ app_info.get_battery_usage_label_html|safe }}</p>
+								{% endif %}
+								{% if app_info.get_network_usage_label %}
+								<p style="margin-left:16px">{{ app_info.get_network_usage_label_html|safe }}</p>
+								{% endif %}
+							{% else %}
+							<p style="margin-left:16px">Uninstall this app from your device <b><u>immediately!!</u></b></p>
+							{% endif %}
+
+						</div>
+						{% if app_info.is_highest_rating_medium_or_greater %}
+							{% if app_info.is_highest_rating_high_or_greater %}
+							<div class="red-container">
+							{% else %}
+							<div class="neutral-container">
+							{% endif %}
+						{% else %}
+							<div class="green-container">
+						{% endif %}
+								{% if app_info.get_risk_categories_count <= 1 %}
+								<h4><b>{{ app_info.get_localized_category_first }}</b></h4>
+								{% else %}
+								<ul class="category_class" id="category_{{ app_info.get_app.get_package_name|replace_dot:'_' }}">
+									{% for risk_category in app_info.get_risk_categories %}
+										{% if forloop.counter0 == 0 %}
+											<li><h4><b>{{ app_info|localize_category:risk_category }}</b></h4></li>
+										{% else %}
+											<li style="display: none;"><h4><b>{{ app_info|localize_category:risk_category }}</b></h4></li>
+										{% endif %}
+									{% endfor %}
+								</ul>
+								{% endif %}
+							</div>
+					  {% if app_info.get_app.get_large_icon_url == None or app_info.get_app.get_large_icon_url == "" %}
+                        <img class="logo" src="{% static 'aotas/images/android_vector.jpg' %}" alt="{{ app_info.get_app.get_name }}">
+                      {% else %}
+                        <img class="logo" src="{{ app_info.get_app.get_large_icon_url }}" alt="{{ app_info.get_app.get_name }}">
+                      {% endif %}
+					  <div class="container">
+						<b class="title">{{ app_info.get_app.get_name }}</b>
+					  </div>
+					</div>
+				{% endfor %}
+		{% endif %}
+	</div>
+{% endblock %}
+{% block javascript %}
+	<script type="text/javascript">
+		// When the user clicks on div, open the popup
+		$(document).on('click', '.card', function(){
+			var card_id = $(this).attr("id")
+			console.log("in show pop up function = " + card_id);
+			var popup = document.getElementById(card_id + "_pop");
+			popup.classList.toggle("show");
+			return false;
+		});
+
+	</script>
+	<script type='text/javascript'>//<![CDATA[
+
+	$(window).load(function() {
+
+		function cycleThrough() {
+		  var categories = $(".category_class");
+		  for (i = 0; i < categories.length; i++) {
+			var category = categories[i];
+			cycleIndividual(category, 0);
+		  }
+
+		}
+
+		function cycleIndividual(category, j) {
+			var delay = 2000;
+			var listItems = $("#"+category.id + " li");
+			var jmax = listItems.length -1;
+			listItems.eq(j)
+						 .fadeIn(1000)
+						 .delay(1000)
+					   .fadeOut(1000,  function(){
+							   $("#"+category.id + " li").hide();
+								 (j == jmax) ? j=0 : j++;
+								 setTimeout( function() {
+								 	cycleIndividual(category, j);
+								 }, 10);
+						 });
+
+		}
+
+		cycleThrough();
+	});
+
+//]]>
+
+</script>
+{% endblock %}

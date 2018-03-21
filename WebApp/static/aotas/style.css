@@ -1,0 +1,293 @@
+html, body {
+    //height: 100%;
+	margin: 0px;
+	margin-top: 60px;
+	margin-bottom: 0;
+    background-image: url("images/wallpaper.png");
+	background-attachment: fixed;
+}
+body{
+    font-family: 'Roboto', sans-serif;
+}
+.cardholder {
+    margin-right: 100px;
+    margin-left: 100px;
+    //box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+	float: left;
+}
+.card {
+    cursor:pointer;
+    position: relative;
+    display: inline-block;
+    margin: 16px 16px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 250px;
+    float:left;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-radius: 5px;
+    background-color: #F5F5F5;
+    z-index:0;
+}
+.logo {
+    display: block;
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 50%;
+}
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
+}
+.container {
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding:16px 0px;
+}
+
+.title {
+    padding:0px 16px;
+}
+
+.red-container {
+    height: 50px;
+    padding: 2px 16px;
+	background-color: red;
+    border-radius: 5px 5px 0px 0px;
+    z-index:0;
+    text-align: center;
+}
+
+.neutral-container {
+    height: 50px;
+    padding: 2px 16px;
+	background-color: orange;
+    border-radius: 5px 5px 0px 0px;
+    z-index:0;
+    text-align: center;
+}
+
+.green-container {
+    height: 50px;
+    padding: 2px 16px;
+	background-color: green;
+    border-radius: 5px 5px 0px 0px;
+    z-index:0;
+    text-align: center;
+}
+
+.clearfix {
+    display: block;
+    width: 100%;
+    height: 60px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
+    position: fixed;
+    top: 0;
+    z-index: 3;
+    background: #fff;
+}
+.hf-mLogo {
+    width: 102px;
+    height: 40px;
+    margin-left: 12px;
+    margin-top: 10px;
+    margin-right: 12px;
+}
+.logo-with-title {
+    width: 40%;
+    float:left;
+    vertical-align: middle;
+    line-height: 60px;
+    font-weight: bold;
+    font-size: 24px;
+}
+.main-container {
+    height: 100%;
+    width: 850px;
+    margin: 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: hidden;
+    background-color: #FFF;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+}
+.login-container {
+    height: 100%;
+    width: 50%;
+    margin: 0 auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: hidden;
+    background-color: #FFF;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+}
+.warning-container {
+        height: 100%;
+        width: 50%;
+        margin: 0 auto;
+        padding-left: 10px;
+        padding-right: 10px;
+        overflow: hidden;
+        color: Khaki   ;
+        background-color: DarkRed ;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+}
+.login-div {
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    padding: 10px;
+	width: 55%;
+	margin: auto;
+}
+.login-note {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin:auto;
+    font-size:90%;
+    width:70%
+}
+input.search {
+    width: 300px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    margin-right: 12px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('images/searchicon.png');
+    background-position: 10px 10px; 
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+    float: right;
+}
+.search-container {
+    cursor:pointer;
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 20px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 20px;
+    padding-bottom: 8px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 60%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-radius: 5px;
+    background-color: #F5F5F5;
+}
+.search-container:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5);
+}
+input.search_main {
+    display: block;
+    width: 80%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('images/searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+input.button {
+    display: block;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin: auto;
+    font-size: 16px;
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 8px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+.button:hover {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.3);
+}
+
+/* The actual popup */
+.card .popuptext {
+    visibility: hidden;
+    width: 100%;
+    background-color: #fff;
+    color: #555;
+    text-align: left;
+    border: 2px solid #ccc;
+    padding: 8px 0;
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    margin-left: -126px;
+    z-index: 1;
+}
+
+/* Popup arrow */
+.card .popuptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #ccc transparent transparent transparent;
+}
+
+.card .popuptext .user_device {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+    border-style:none;
+    text-align: center;
+    line-height: 38px;
+}
+
+/* Toggle this class - hide and show the popup */
+.card .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+.popup-device {
+    height: 30px;
+    float:left;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+.category_class {
+    list-style:none;
+    padding-left:0;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}

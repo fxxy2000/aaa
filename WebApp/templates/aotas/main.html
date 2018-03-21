@@ -1,0 +1,58 @@
+{% extends 'aotas/base.html' %}
+{% load static %}
+{% block header %}
+<div class="clearfix">
+    <div class="logo-with-title">
+		<img src="{% static 'aotas/images/norton.png' %}" align="left" class="hf-mLogo"/>App Advisor Anywhere
+	</div>
+</div>
+{% endblock %}
+
+{% block content %}
+    {% if devices == None %}
+    <div class="main-container">
+        <h2 align="center"> Please <a href="{% url 'login_user' %}">login</a> first </h2>
+    </div>
+    {% else %}
+	<div class="main-container">
+		<h1 align="center"> Pre-install App Scan </h1>
+		<p align="center"> Try to search what you want to install on your device </p>
+		<div class="search-container">
+			<form id="search" action="{% url 'searchgp' %}"  method='post'>{% csrf_token %}
+				<input class="search_main" type="text" name="keyword" placeholder="Search in Google Play...">
+			</form>
+			<form id="norton" action="{% url 'searchgp' %}"  method='post'>{% csrf_token %}
+				<input type="hidden" name="keyword" value='pub:"NortonMobile"'>
+			</form>
+			<table align="center" style="border-spacing:10px">
+				<tr>
+					<th align="center"><input form="search" class="button" type='submit' value='Search' /></th>
+					<th align="center"></th>
+					<th align="center"><input form="norton" class="button" type='submit' value='Get Norton' /></th>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<h1 align="center">  </h1>
+
+	<div class="main-container">
+		<h1 align="center"> Installed App Scan </h1>
+		<p align="center"> Click device icon to scan the apps currently installed on that device </p>
+		{% for device in devices %}
+			<a href="{% url 'get_apps_results' %}?deviceId={{ device.get_web_id }}&deviceName={{ device.get_brand_name }} {{ device.get_model_name }} ({{device.get_carrier_name}})">
+				<div class="card">
+                  {% if device.get_large_icon_url == None or device.get_large_icon_url == "" %}
+                    <img class="logo" src="{% static 'aotas/images/android_vector.jpg' %}" alt="{{ device.get_display_name }}">
+                  {% else %}
+                    <img class="logo" src="{{ device.get_large_icon_url }}" alt="{{ device.get_display_name }}">
+                  {% endif %}
+				  <div class="container">
+					<b class="title">{{ device.get_brand_name }} {{ device.get_model_name }} ({{device.get_carrier_name}}) </b>
+				  </div>
+				</div>
+			</a>
+		{% endfor %}
+    </div>
+    {% endif %}
+{% endblock content %}
